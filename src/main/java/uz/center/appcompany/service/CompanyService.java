@@ -79,9 +79,8 @@ public class CompanyService {
             companyRepository.deleteById(id);
             return new ApiResponse("Deleted", true);
         } catch (Exception e) {
-            return new ApiResponse("Error", true);
+            return new ApiResponse("Error", false);
         }
-        return new ApiResponse("Error", false);
     }
 
 }
