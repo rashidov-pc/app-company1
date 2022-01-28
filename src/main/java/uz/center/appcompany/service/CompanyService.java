@@ -11,8 +11,6 @@ import uz.center.appcompany.repository.CompanyRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class CompanyService {
@@ -22,21 +20,22 @@ public class CompanyService {
     @Autowired
     CompanyRepository companyRepository;
 
-    public ApiResponse all(){
-        List<Company> all = companyRepository.findAll();
-        return new ApiResponse("ok", true);
+    public List<Company> all(){
+        List<Company> all = companyRepository.findAll();;
+        return all;
     }
 
-    public ApiResponse getCompany(Integer id) {
+    public Company getCompany(Integer id) {
         Optional<Company> optionalCompany = companyRepository.findById(id);
-        if (!optionalCompany.isPresent()){
-            return new ApiResponse("Company not found", false);
-        }
-
-        return new ApiResponse("ok", true);
+        return optionalCompany.orElse(null);
     }
 
     public ApiResponse saveCompany(CompanyDto dto){
+        boolean existsByCorpName = companyRepository.existsByCorpName(dto.getCorpName());
+        if (existsByCorpName){
+            return new ApiResponse("Bunday kompaniya mavjud", false);
+        }
+
         Address address = new Address();
         address.setStreet(dto.getStreet());
         address.setHomeNumber(dto.getHomeNumber());
@@ -54,6 +53,11 @@ public class CompanyService {
 
     public ApiResponse editCompany(CompanyDto dto, Integer id){
         try {
+            boolean nameAndIdNot = companyRepository.existsByCorpNameAndIdNot(dto.getCorpName(), id);
+            if (nameAndIdNot){
+                return new ApiResponse("Bunday kompaniya mavjud", false);
+            }
+
             Company company = companyRepository.findById(id)
                     .orElseThrow(() -> new IllegalStateException("Company not found"));
             Address address = new Address();
@@ -75,7 +79,7 @@ public class CompanyService {
             companyRepository.deleteById(id);
             return new ApiResponse("Deleted", true);
         } catch (Exception e) {
-            e.printStackTrace();
+            return new ApiResponse("Error", true);
         }
         return new ApiResponse("Error", false);
     }
