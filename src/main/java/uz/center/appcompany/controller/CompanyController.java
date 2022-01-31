@@ -47,7 +47,7 @@ public class CompanyController {
         return ResponseEntity.status(response.isSuccess() ? 202 : 409).body(response);
     }
 
-    @GetMapping("/remove/{id}")
+    @DeleteMapping("/remove/{id}")
     public HttpEntity<?> remove(@PathVariable Integer id) {
         ApiResponse response = companyService.remove(id);
         return ResponseEntity.status(response.isSuccess() ? 202 : 409).body(response);
