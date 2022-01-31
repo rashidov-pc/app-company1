@@ -48,7 +48,7 @@ public class DepartmentController {
     }
 
     @DeleteMapping("/{id}")
-    public HttpEntity<?> deleteCustomer(@PathVariable Integer id){
+    public HttpEntity<?> deleteDepartment(@PathVariable Integer id){
         ApiResponse response = departmentService.deleteDepartment(id);
         return ResponseEntity.status(response.isSuccess() ? 202 : 409).body(response);
     }
